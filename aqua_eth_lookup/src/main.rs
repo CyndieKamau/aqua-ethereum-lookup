@@ -1,5 +1,5 @@
-use eyre::Result;
 use aqua_eth_lookup::providers::infura::get_tx_data;
+use eyre::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
