@@ -96,7 +96,7 @@ pub async fn get_tx_data(chain_id: u32, tx_hash: &str) -> Result<(H512, u64)> {
     let tx: CustomTransaction =
         from_value(serde_json::to_value(&tx)?).wrap_err("Failed to deserialize transaction")?;
 
-    let blocknumber = u64::from_str_radix(&tx.blockNumber.trim_start_matches("0x"), 16)
+    let blocknumber = u64::from_str_radix(tx.blockNumber.trim_start_matches("0x"), 16)
         .wrap_err("Failed to parse block number")?;
 
     let block = client
@@ -106,7 +106,7 @@ pub async fn get_tx_data(chain_id: u32, tx_hash: &str) -> Result<(H512, u64)> {
     let blocktime: Blocktime =
         from_value(serde_json::to_value(&block)?).wrap_err("Failed to deserialize block time")?;
 
-    let blocktime_u64 = u64::from_str_radix(&blocktime.timestamp.trim_start_matches("0x"), 16)
+    let blocktime_u64 = u64::from_str_radix(blocktime.timestamp.trim_start_matches("0x"), 16)
         .wrap_err("Failed to parse timestamp")?;
 
     let input = tx.input[10..]
