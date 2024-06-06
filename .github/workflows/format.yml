@@ -27,3 +27,4 @@ jobs:
 
       - name: Run rustfmt
         run: cargo fmt --all -- --check
+        working-directory: ./aqua_eth_lookup
