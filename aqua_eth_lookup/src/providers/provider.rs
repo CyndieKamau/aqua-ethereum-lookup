@@ -10,7 +10,12 @@ use serde_json::from_value;
 use std::convert::TryFrom;
 
 use crate::constants::constants::{
-    UrlProvider, ALCHEMY_API_KEY_MUST_BE_SET, FAILED_TO_CREATE_PROVIDER, FAILED_TO_DESERIALIZE_BLOCK_TIME, FAILED_TO_DESERIALIZE_TRANSACTION, FAILED_TO_GET_BLOCK, FAILED_TO_GET_CHAIN_ID, FAILED_TO_GET_TRANSACTION, FAILED_TO_PARSE_BLOCK_NUMBER, FAILED_TO_PARSE_INPUT, FAILED_TO_PARSE_TIMESTAMP, FAILED_TO_PARSE_TRANSACTION_HASH, FAILED_TO_PARSE_WALLET_KEY, INFURA_KEY_MUST_BE_SET, SELF_HOSTED_API_KEY_MUST_BE_SET, SIGNER_PRIVATE_KEY_MUST_BE_SET
+    UrlProvider, ALCHEMY_API_KEY_MUST_BE_SET, FAILED_TO_CREATE_PROVIDER,
+    FAILED_TO_DESERIALIZE_BLOCK_TIME, FAILED_TO_DESERIALIZE_TRANSACTION, FAILED_TO_GET_BLOCK,
+    FAILED_TO_GET_CHAIN_ID, FAILED_TO_GET_TRANSACTION, FAILED_TO_PARSE_BLOCK_NUMBER,
+    FAILED_TO_PARSE_INPUT, FAILED_TO_PARSE_TIMESTAMP, FAILED_TO_PARSE_TRANSACTION_HASH,
+    FAILED_TO_PARSE_WALLET_KEY, INFURA_KEY_MUST_BE_SET, SELF_HOSTED_API_KEY_MUST_BE_SET,
+    SIGNER_PRIVATE_KEY_MUST_BE_SET,
 };
 
 #[derive(Deserialize, Debug)]
@@ -83,12 +88,13 @@ pub async fn get_tx_data(
     // Load Infura API key from .env file
     // let infura_api_key = std::env::var("INFURA_API_KEY").wrap_err(INFURA_KEY_MUST_BE_SET)?;
     let infura_api_key = match url_provider {
-        UrlProvider::Infura => std::env::var("INFURA_API_KEY")
-            .wrap_err(INFURA_KEY_MUST_BE_SET)?,
-        UrlProvider::SelfHosted => std::env::var("SELF_HOSTED_API_KEY")
-            .wrap_err(SELF_HOSTED_API_KEY_MUST_BE_SET)?,
-        UrlProvider::Alchemy => std::env::var("ALCHEMY_API_KEY")
-            .wrap_err(ALCHEMY_API_KEY_MUST_BE_SET)?,
+        UrlProvider::Infura => std::env::var("INFURA_API_KEY").wrap_err(INFURA_KEY_MUST_BE_SET)?,
+        UrlProvider::SelfHosted => {
+            std::env::var("SELF_HOSTED_API_KEY").wrap_err(SELF_HOSTED_API_KEY_MUST_BE_SET)?
+        }
+        UrlProvider::Alchemy => {
+            std::env::var("ALCHEMY_API_KEY").wrap_err(ALCHEMY_API_KEY_MUST_BE_SET)?
+        }
     };
 
     // Get the URL prefix for the specified chain ID

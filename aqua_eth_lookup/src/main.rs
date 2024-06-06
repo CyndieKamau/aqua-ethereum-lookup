@@ -12,8 +12,9 @@ async fn main() -> Result<()> {
     let result = get_tx_data(
         0xaa36a7,
         "0xd82cb4b91a83124fdd2aa367256c22b94276cbc046d1cf56379035fb13a9dd00",
-        UrlProvider::Infura
-    ).await;
+        UrlProvider::Infura,
+    )
+    .await;
 
     match result {
         Ok((input, blocktime_u64)) => {

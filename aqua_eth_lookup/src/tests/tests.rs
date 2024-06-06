@@ -7,7 +7,8 @@ mod tests {
     use crate::{
         constants::constants::{
             UrlProvider, FAILED_TO_PARSE_TRANSACTION_HASH, WRONG_BLOCK_TIMESTAMP, WRONG_INPUT,
-        }, provider::get_tx_data,
+        },
+        provider::get_tx_data,
     };
 
     #[tokio::test]
