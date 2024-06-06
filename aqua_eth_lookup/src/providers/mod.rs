@@ -1,8 +1,3 @@
-#[cfg(feature = "infura")]
-pub mod infura;
 
-#[cfg(feature = "alchemy")]
-pub mod alchemy;
+pub mod provider;
 
-#[cfg(feature = "self_hosted_node")]
-pub mod self_hosted_node;

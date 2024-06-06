@@ -24,12 +24,6 @@ ethereum-types = "0.14.1"
 [dev-dependencies]
 tokio = { version = "1.18.0", features = ["full"] }
 
-[features]
-default = ["infura"]
-infura = []
-alchemy = []
-self_hosted = []
-
 [[bin]]
 name = "aqua_eth_lookup"
 path = "src/main.rs"
