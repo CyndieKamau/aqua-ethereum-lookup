@@ -5,7 +5,7 @@ use ethers::{
     providers::{Http, Middleware, Provider},
     signers::{LocalWallet, Signer},
 };
-use eyre::{Result, WrapErr};
+use eyre::{Report, Result, WrapErr};
 use serde::Deserialize;
 use serde_json::from_value;
 use std::collections::HashMap;
@@ -45,70 +45,80 @@ fn chain_id_to_url() -> HashMap<u32, &'static str> {
     map
 }
 
-pub async fn get_tx_data(chain_id: u32, tx_hash: &str) -> Result<(H512, u64)> {
-    let urls = chain_id_to_url();
+pub async fn get_tx_data(chain_id: u32, tx_hash: &str) -> Result<(H512, u64), Report> {
+    // Load the .env file
+    dotenv::dotenv().ok();
 
-    //build URL
+    // Load Infura API key from .env file
+    let infura_api_key = std::env::var("INFURA_API_KEY").wrap_err("INFURA_API_KEY must be set")?;
+
+    // Get the URL prefix for the specified chain ID
+    let urls = chain_id_to_url();
     let url_prefix = urls
         .get(&chain_id)
         .ok_or_else(|| eyre::eyre!("Unsupported chain ID: {}", chain_id))?;
 
-    //load .env file
-    dotenv().ok();
-
-    //Load infura API key from .env file
-    let infura_api_key = std::env::var("INFURA_API_KEY").wrap_err("INFURA_API_KEY must be set")?;
+    // Build the full URL
     let url = format!("{}{}", url_prefix, infura_api_key);
 
     // Connect to the network via Infura
     let provider = Provider::<Http>::try_from(url).wrap_err("Failed to create provider")?;
 
-    //This is an alternative way to connect to the network via Infura with an Public API key
-    //let provider = Provider::<Http>::try_from("https://mainnet.infura.io/v3/3d110a0fce9e49b08d2ee584e19a05ba")?;
-
+    // Get the chain ID
     let chain_id = provider
         .get_chainid()
         .await
         .wrap_err("Failed to get chain ID")?;
 
-    // Define the signer.
-    // Define the the SIGNER_PRIVATE_KEY with
-    // the private key of your Ethereum account (without the 0x prefix) in the .env file.
-
+    // Load the signer private key from the .env file
     let wallet_key =
         std::env::var("SIGNER_PRIVATE_KEY").wrap_err("SIGNER_PRIVATE_KEY must be set")?;
+
+    // Parse the wallet key
     let wallet: LocalWallet = wallet_key
         .parse::<LocalWallet>()
         .wrap_err("Failed to parse wallet key")?
         .with_chain_id(chain_id.as_u64());
 
-    // connect the wallet to the provider
+    // Connect the wallet to the provider
     let client = SignerMiddleware::new(provider, wallet);
 
+    // Parse the transaction hash
     let transaction_hash: H256 = tx_hash
         .parse()
         .wrap_err("Failed to parse transaction hash")?;
 
+    // Get the transaction
     let tx = client
         .get_transaction(transaction_hash)
         .await
-        .wrap_err("Failed to get transaction")?;
+        .wrap_err("Failed to get transaction")?
+        .ok_or_else(|| eyre::eyre!("Transaction not found"))?;
+
+    // Deserialize the transaction
     let tx: CustomTransaction =
         from_value(serde_json::to_value(&tx)?).wrap_err("Failed to deserialize transaction")?;
 
+    // Parse the block number
     let blocknumber = u64::from_str_radix(tx.blockNumber.trim_start_matches("0x"), 16)
         .wrap_err("Failed to parse block number")?;
 
+    // Get the block
     let block = client
         .get_block(blocknumber)
         .await
-        .wrap_err("Failed to get block")?;
+        .wrap_err("Failed to get block")?
+        .ok_or_else(|| eyre::eyre!("Block not found"))?;
+
+    // Deserialize the block time
     let blocktime: Blocktime =
         from_value(serde_json::to_value(&block)?).wrap_err("Failed to deserialize block time")?;
 
+    // Parse the block timestamp
     let blocktime_u64 = u64::from_str_radix(blocktime.timestamp.trim_start_matches("0x"), 16)
         .wrap_err("Failed to parse timestamp")?;
 
+    // Parse the input
     let input = tx.input[10..]
         .parse::<H512>()
         .wrap_err("Failed to parse input")?;

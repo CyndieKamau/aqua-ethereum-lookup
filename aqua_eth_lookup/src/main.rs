@@ -11,8 +11,8 @@ async fn main() -> Result<()> {
     //Ok(get_tx_data(0xaa36a7,"0xae9b476d8eed73897b0f71ac59c267856dbae64f249518fea862377208436cc5").await?)
     let result = get_tx_data(
         0xaa36a7,
-        "0xd82cb4b91a83124fdd2aa367256c22b94276cbc046d1cf56379035fb13a9dd00",
+        "0xd82cb4b91a83124fdd2aa367256c22b94276cbc046d1cf56379035fb13a9dd000",
     );
-    println!("The result is {:?}", result.await?);
+    println!("The result is {:?}", result.await);
     Ok(())
 }
