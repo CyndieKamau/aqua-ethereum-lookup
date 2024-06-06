@@ -9,7 +9,7 @@ use serde::Deserialize;
 use serde_json::from_value;
 use std::convert::TryFrom;
 
-use crate::constants::constants::{
+use crate::constants::helpers::{
     UrlProvider, ALCHEMY_API_KEY_MUST_BE_SET, FAILED_TO_CREATE_PROVIDER,
     FAILED_TO_DESERIALIZE_BLOCK_TIME, FAILED_TO_DESERIALIZE_TRANSACTION, FAILED_TO_GET_BLOCK,
     FAILED_TO_GET_CHAIN_ID, FAILED_TO_GET_TRANSACTION, FAILED_TO_PARSE_BLOCK_NUMBER,
@@ -45,7 +45,7 @@ struct Blocktime {
 // (sepolia, 0xae9b476d8eed73897b0f71ac59c267856dbae64f249518fea862377208436cc5)
 
 impl UrlProvider {
-    fn to_url(&self, chain_id: u32) -> Option<&'static str> {
+    fn to_url(self, chain_id: u32) -> Option<&'static str> {
         match self {
             UrlProvider::Infura => chain_id_to_infura_url(chain_id),
             UrlProvider::SelfHosted => chain_id_to_self_hosted_url(chain_id),
@@ -63,6 +63,7 @@ fn chain_id_to_infura_url(chain_id: u32) -> Option<&'static str> {
     }
 }
 
+#[allow(clippy::match_single_binding)]
 fn chain_id_to_self_hosted_url(chain_id: u32) -> Option<&'static str> {
     match chain_id {
         // Add self-hosted URLs for specific chain IDs
@@ -70,6 +71,7 @@ fn chain_id_to_self_hosted_url(chain_id: u32) -> Option<&'static str> {
     }
 }
 
+#[allow(clippy::match_single_binding)]
 fn chain_id_to_alchemy_url(chain_id: u32) -> Option<&'static str> {
     match chain_id {
         // Add Alchemy URLs for specific chain IDs

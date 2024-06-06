@@ -5,7 +5,7 @@ mod tests {
     use ethereum_types::H512;
 
     use crate::{
-        constants::constants::{
+        constants::helpers::{
             UrlProvider, FAILED_TO_PARSE_TRANSACTION_HASH, WRONG_BLOCK_TIMESTAMP, WRONG_INPUT,
         },
         provider::get_tx_data,

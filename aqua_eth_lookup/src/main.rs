@@ -1,4 +1,4 @@
-use aqua_eth_lookup::{constants::constants::UrlProvider, providers::provider::get_tx_data};
+use aqua_eth_lookup::{constants::helpers::UrlProvider, providers::provider::get_tx_data};
 use eyre::Result;
 
 #[tokio::main]
